@@ -7,8 +7,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tangchen.snake.Const.*;
-
 /**
  * Created by TangChen on 17/10/24.
  */
@@ -40,11 +38,11 @@ public class Snake {
     private void motionSnake() {
         SnakePoint nextPoint;
 
-        if (snakeView.moveDirection == RIGHT) {
+        if (snakeView.moveDirection == Const.RIGHT) {
             nextPoint = new SnakePoint(headPoint.x + 1, headPoint.y);
-        } else if (snakeView.moveDirection == LEFT) {
+        } else if (snakeView.moveDirection == Const.LEFT) {
             nextPoint = new SnakePoint(headPoint.x - 1, headPoint.y);
-        } else if (snakeView.moveDirection == TOP) {
+        } else if (snakeView.moveDirection == Const.TOP) {
             nextPoint = new SnakePoint(headPoint.x, headPoint.y + 1);
         } else {
             nextPoint = new SnakePoint(headPoint.x, headPoint.y - 1);
@@ -75,26 +73,26 @@ public class Snake {
 
     private boolean hitWall() {
         switch (snakeView.moveDirection) {
-            case RIGHT:
-                if (snakeView.mapArray[headPoint.x + 1][headPoint.y] == isWall) {
+            case Const.RIGHT:
+                if (snakeView.mapArray[headPoint.x + 1][headPoint.y] == Const.isWall) {
                     Log.d("hit wall", "true");
                     return true;
                 }
                 break;
-            case TOP:
-                if (snakeView.mapArray[headPoint.x][headPoint.y + 1] == isWall) {
+            case Const.TOP:
+                if (snakeView.mapArray[headPoint.x][headPoint.y + 1] == Const.isWall) {
                     Log.d("hit wall", "true");
                     return true;
                 }
                 break;
-            case LEFT:
-                if (snakeView.mapArray[headPoint.x - 1][headPoint.y] == isWall) {
+            case Const.LEFT:
+                if (snakeView.mapArray[headPoint.x - 1][headPoint.y] == Const.isWall) {
                     Log.d("hit wall", "true");
                     return true;
                 }
                 break;
-            case BOTTOM:
-                if (snakeView.mapArray[headPoint.x][headPoint.y - 1] == isWall) {
+            case Const.BOTTOM:
+                if (snakeView.mapArray[headPoint.x][headPoint.y - 1] == Const.isWall) {
                     Log.d("hit wall", "true");
                     return true;
                 }
