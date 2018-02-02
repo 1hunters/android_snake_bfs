@@ -1,7 +1,7 @@
 package com.tangchen.snake;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 
 public class MainActivity extends AppCompatActivity {
@@ -13,8 +13,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         snakeView = (SnakeView) findViewById(R.id.snackView);
-
-        Snake.getInstance().bindView(snakeView);
+        Snake controller = Snake.getInstance();
+        BFS bfs = BFS.getInstance();
+        bfs.bind(controller);
+        controller.bind(snakeView, bfs);
+        controller.initSnake();
     }
 
     float startX, startY;

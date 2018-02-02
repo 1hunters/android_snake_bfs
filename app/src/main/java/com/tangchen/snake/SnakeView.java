@@ -8,21 +8,19 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
-import java.util.Random;
+import java.util.List;
 
 /**
  * Created by TangChen on 17/10/24.
  */
 
 public class SnakeView extends View {
-    public int[][] mapArray = new int[Const.mapSize][Const.mapSize];
     public int moveDirection;
-    private boolean isOnce = true;
     public boolean isEat = false;
-    SnakePoint food;
-    private Snake snakeInstance = Snake.getInstance();
+    private Snake controller = Snake.getInstance();
 
     public SnakeView(Context context) {
         super(context);
@@ -41,14 +39,13 @@ public class SnakeView extends View {
     }
 
     //    绘制整张地图，先将数组的边界绘制为墙
-    public void initMap() {
+    public void initMap(int[][] mapArray) {
         for (int x = 0; x < Const.mapSize; x++) {
             for (int y = 0; y < Const.mapSize; y++) {
-                if (x == 0 || y == 0 || x == Const.mapSize - 1 || y == Const.mapSize - 1) {
+                if (x == 0 || y == 0 || x == Const.mapSize - 1 || y == Const.mapSize - 1)
                     mapArray[x][y] = Const.isWall;
-                } else {
+                else
                     mapArray[x][y] = Const.isEmpty;
-                }
             }
         }
     }
@@ -57,44 +54,35 @@ public class SnakeView extends View {
     @SuppressLint("DrawAllocation")
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        initMap(); //每次绘制重置地图
-
-        int offsetX = getWidth() / Const.mapSize;
-        int offsetY = getWidth() / Const.mapSize;
-
+        int[][] mapArray = controller.mapArray;
         Paint paint = new Paint();
 
-        for (SnakePoint snackPoint : snakeInstance.snakePoints) {
-            mapArray[snackPoint.x][snackPoint.y] = Const.isFull; //遍历整个snakePoints数组，将其内存放的连续坐标都设置为已满（即为蛇身）
-        }
+        initMap(mapArray); //每次绘制重置地图
+        int offsetX = getWidth() / Const.mapSize;
+        int offsetY = getWidth() / Const.mapSize;
+        SnakePoint headPoint = controller.getHeadPoint();
+
+        List<SnakePoint> snakeBody = controller.snakePoints;
+
+        for (SnakePoint snakePoint : snakeBody)
+            mapArray[snakePoint.x][snakePoint.y] = Const.isFull; //遍历整个snakePoints数组，将其内存放的连续坐标都设置为已满（即为蛇身）
 
         for (int x = 0; x < Const.mapSize; x++) {
             for (int y = 0; y < Const.mapSize; y++) {
                 Rect r = new Rect(x * offsetX, y * offsetY, offsetX + offsetX * x, offsetY + offsetY * y);
-                if (mapArray[x][y] == Const.isEmpty) {
+                if (mapArray[x][y] == Const.isEmpty)
                     paint.setColor(Color.WHITE);
-                } else if (mapArray[x][y] == Const.isWall) {
+                else if (mapArray[x][y] == Const.isWall)
                     paint.setColor(Color.GREEN);
-                } else {
+                else if (headPoint.x == x && headPoint.y == y)
+                    paint.setColor(Color.BLACK);
+                else
                     paint.setColor(Color.RED);
-                }
 
                 canvas.drawRect(r, paint); //绘制
-
             }
         }
-
-        if (isOnce) {
-            init();
-            new Thread(snakeInstance.new GameThread()).start();
-            isOnce = false;
-        }
-
-        if (isEat) {
-            while (!checkUsable(food = produceFood())); //生成一个新的食物
-            isEat = false;
-        }
-
+        SnakePoint food = controller.food;
         mapArray[food.x][food.y] = Const.isFood;
 
         Rect r = new Rect(food.x * offsetX, food.y * offsetY, offsetX + offsetX * food.x, offsetY + offsetY * food.y);
@@ -102,49 +90,18 @@ public class SnakeView extends View {
         canvas.drawRect(r, paint);
     }
 
-    /**
-     * 初始化，生成一条向右运动，于第五行第五列到第五行第七列的占同三格的蛇
-     */
-    public void init() {
-        moveDirection = Const.RIGHT;
+//    /**
+//     * 初始化，生成一条向右运动，于第五行第五列到第五行第七列的占同三格的蛇
+//     */
+//    public void init() {
+//        moveDirection = Const.RIGHT;
+//
+//    }
 
-        for (int i = 5; i <= 7; i++) {
-            snakeInstance.snakePoints.add(new SnakePoint(i, 5));
-        }
-
-//        设置蛇尾为动态数组第一个数据
-        snakeInstance.tailPoint = snakeInstance.snakePoints.get(Const.TAILPOINT);
-//        蛇头为数组最后一个数据
-        snakeInstance.headPoint = snakeInstance.snakePoints.get(snakeInstance.snakePoints.size() - 1);
-
-        while (!checkUsable(food = produceFood())) ;
-    }
-
-    private boolean checkUsable(SnakePoint newFoodPoint) {
-//        遍历整个蛇身数组，检查生成的食物是否在蛇身或墙内
-        for (SnakePoint point : snakeInstance.snakePoints) {
-            if (point.equals(newFoodPoint) || mapArray[newFoodPoint.x][newFoodPoint.y] == Const.isWall) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private SnakePoint produceFood() {
-//        通过随机数生成xy两个数据
-        Random random = new Random();
-        int x, y;
-        x = random.nextInt(Const.mapSize);
-        y = random.nextInt(Const.mapSize);
-
-        return new SnakePoint(x, y);
-    }
-
-    public void resetSnake() {
-        initMap();
-        snakeInstance.snakePoints.clear();
-        snakeInstance.INTERVAL = 1000;
-        init();
-    }
+//    public void resetSnake() {
+//        initMap(mapArray);
+//        snakeInstance.snakePoints.clear();
+//        Const.INTERVAL = 900.0;
+//        init();
+//    }
 }

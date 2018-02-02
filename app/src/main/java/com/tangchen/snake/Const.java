@@ -5,9 +5,10 @@ package com.tangchen.snake;
  */
 
 public class Const {
-    public static int speed = 5;
+    public static double INTERVAL = 900.0;
     public static int mapSize = 18;
     public final static int TAILPOINT = 0;
+    public final static int FIRSTPOINT = 0;
     public static int isWall = 0;
     public static int isEmpty = 1;
     public static int isFull = 2;
