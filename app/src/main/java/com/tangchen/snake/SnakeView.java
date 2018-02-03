@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.List;
 
 public class SnakeView extends View {
     public int moveDirection;
-    public boolean isEat = false;
     private Snake controller = Snake.getInstance();
 
     public SnakeView(Context context) {

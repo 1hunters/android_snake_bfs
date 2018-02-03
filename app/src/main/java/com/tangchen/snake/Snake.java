@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.tangchen.snake.Const.INTERVAL;
+import static com.tangchen.snake.Const.LEFT;
+import static com.tangchen.snake.Const.TOP;
 
 /**
  * Created by TangChen on 17/10/24.
@@ -44,62 +45,70 @@ public class Snake {
     private void motionSnake() {
         SnakePoint nextPoint;
 
-        if (snakeView.moveDirection == Const.RIGHT)
-            nextPoint = new SnakePoint(headPoint.x + 1, headPoint.y);
-        else if (snakeView.moveDirection == Const.LEFT)
-            nextPoint = new SnakePoint(headPoint.x - 1, headPoint.y);
-        else if (snakeView.moveDirection == Const.TOP)
-            nextPoint = new SnakePoint(headPoint.x, headPoint.y + 1);
-        else
-            nextPoint = new SnakePoint(headPoint.x, headPoint.y - 1);
-
-        for (SnakePoint point : snakePoints) {
-            if (point.equals(nextPoint)) {
-                for (int i = 0; i < snakePoints.size(); i++) {
-                    if (snakePoints.get(i).equals(nextPoint))
-                        snakePoints = snakePoints.subList(i, snakePoints.size());
-                }
-            }
+        switch (snakeView.moveDirection) {
+            case Const.RIGHT:
+                nextPoint = new SnakePoint(headPoint.x + 1, headPoint.y);
+                break;
+            case LEFT:
+                nextPoint = new SnakePoint(headPoint.x - 1, headPoint.y);
+                break;
+            case TOP:
+                nextPoint = new SnakePoint(headPoint.x, headPoint.y + 1);
+                break;
+            default:
+                nextPoint = new SnakePoint(headPoint.x, headPoint.y - 1);
+                break;
         }
+
+//        蛇头碰撞到蛇身
+//        for (SnakePoint point : snakePoints) {
+//            if (point.equals(nextPoint)) {
+//                for (int i = 0; i < snakePoints.size(); i++) {
+//                    if (snakePoints.get(i).equals(nextPoint))
+//                        snakePoints = snakePoints.subList(i, snakePoints.size());
+//                }
+//            }
+//        }
 
         snakePoints.add(nextPoint);
         headPoint = snakePoints.get(snakePoints.size() - 1);
 
         if (nextPoint.equals(food)) {
-            snakeView.isEat = true;
+//            snakeView.isEat = true;
             while (!checkUsable(produceFood())) ; //生成一个新的食物
 
             bfs.path();
 
-            if (INTERVAL >= 500)
-                INTERVAL *= 0.95;
+//            if (INTERVAL >= 500)
+//                INTERVAL *= 0.95;
         } else
             snakePoints.remove(tailPoint);
 
         tailPoint = snakePoints.get(Const.TAILPOINT);
     }
 
-    private boolean hitWall() {
-        switch (snakeView.moveDirection) {
-            case Const.RIGHT:
-                if (mapArray[headPoint.x + 1][headPoint.y] == Const.isWall)
-                    return true;
-                break;
-            case Const.TOP:
-                if (mapArray[headPoint.x][headPoint.y + 1] == Const.isWall)
-                    return true;
-                break;
-            case Const.LEFT:
-                if (mapArray[headPoint.x - 1][headPoint.y] == Const.isWall)
-                    return true;
-                break;
-            case Const.BOTTOM:
-                if (mapArray[headPoint.x][headPoint.y - 1] == Const.isWall)
-                    return true;
-        }
-
-        return false;
-    }
+//    撞击检测
+//    private boolean hitWall() {
+//        switch (snakeView.moveDirection) {
+//            case Const.RIGHT:
+//                if (mapArray[headPoint.x + 1][headPoint.y] == Const.isWall)
+//                    return true;
+//                break;
+//            case Const.TOP:
+//                if (mapArray[headPoint.x][headPoint.y + 1] == Const.isWall)
+//                    return true;
+//                break;
+//            case Const.LEFT:
+//                if (mapArray[headPoint.x - 1][headPoint.y] == Const.isWall)
+//                    return true;
+//                break;
+//            case Const.BOTTOM:
+//                if (mapArray[headPoint.x][headPoint.y - 1] == Const.isWall)
+//                    return true;
+//        }
+//
+//        return false;
+//    }
 
     @SuppressLint("HandlerLeak")
     private Handler myHandler = new Handler() {
@@ -125,7 +134,7 @@ public class Snake {
         start();
     }
 
-    public void start() {
+    private void start() {
         snakeView.initMap(mapArray);
         while (!checkUsable(produceFood())) ;
         bfs.path();
@@ -136,9 +145,9 @@ public class Snake {
         return headPoint;
     }
 
-    public SnakePoint getTailPoint() {
-        return tailPoint;
-    }
+//    public SnakePoint getTailPoint() {
+//        return tailPoint;
+//    }
 
     public boolean checkUsable(SnakePoint newFoodPoint) {
 //        遍历整个蛇身数组，检查生成的食物是否在蛇身或墙内
@@ -157,7 +166,7 @@ public class Snake {
         return true;
     }
 
-    public SnakePoint produceFood() {
+    private SnakePoint produceFood() {
 //        通过随机数生成xy两个数据
         Random random = new Random();
         int x, y;
@@ -173,20 +182,16 @@ public class Snake {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-//                当没撞墙时，每次循环调用一次运动方法，将整个蛇身向某个方向运动
-                while (true) {
                     snakeView.moveDirection = bfs.nextDir();
                     motionSnake();
                     Message message = new Message();
                     message.obj = "refresh";
                     myHandler.sendMessage(message);
                     try {
-                        Thread.sleep((int) 150);
+                        Thread.sleep(150);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
-                }
-
                 //snakeView.resetSnake();
             }
         }
