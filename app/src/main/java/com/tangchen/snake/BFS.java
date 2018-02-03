@@ -27,7 +27,7 @@ public class BFS {
         return instance;
     }
 
-    public int getDirection() {
+    public int nextDir() {
         PathPoint point = path.get(Const.FIRSTPOINT);
         SnakePoint head = snake.getHeadPoint();
 
@@ -49,61 +49,45 @@ public class BFS {
         }
     }
 
-    private boolean newPath(SnakePoint pathPoint, boolean isNewPath) {
+    private int[][] map;
+    private List<PathPoint> bfsPath;
+    private Queue<PathPoint> queue;
+    private boolean[][] isVisit;
+
+    private boolean search(SnakePoint pathPoint, boolean isNewPath) {
         headPoint = snake.getHeadPoint();
         foodPoint = pathPoint;
 
-        int[][] mapArray = snake.mapArray;
-        List<PathPoint> bfsPoints = new ArrayList<>();
-        Queue<PathPoint> queue = new LinkedList<>();
-        boolean[][] isVisit = new boolean[Const.mapSize][Const.mapSize];
+        map = snake.mapArray;
+        bfsPath = new ArrayList<>();
+        queue = new LinkedList<>();
+        isVisit = new boolean[Const.mapSize][Const.mapSize];
         PathPoint head = new PathPoint(headPoint.x, headPoint.y, null);
         isVisit[headPoint.x][headPoint.y] = true;
         queue.add(head);
 
         while (!queue.isEmpty()) {
             PathPoint curPoint = queue.poll();
-            PathPoint nextPoint;
 
-            if ((mapArray[curPoint.x - 1][curPoint.y] == Const.isEmpty || mapArray[curPoint.x - 1][curPoint.y] == Const.isFood)
-                    && !isVisit[curPoint.x - 1][curPoint.y]) {
-                nextPoint = new PathPoint(curPoint.x - 1, curPoint.y, curPoint);
-                isVisit[curPoint.x - 1][curPoint.y] = true;
-                bfsPoints.add(nextPoint);
-                queue.add(nextPoint);
-            }
+            if(point(curPoint.x - 1, curPoint.y))
+                add(curPoint.x - 1, curPoint.y, curPoint);
 
-            if ((mapArray[curPoint.x][curPoint.y - 1] == Const.isEmpty || mapArray[curPoint.x][curPoint.y - 1] == Const.isFood)
-                    && !isVisit[curPoint.x][curPoint.y - 1]) {
-                nextPoint = new PathPoint(curPoint.x, curPoint.y - 1, curPoint);
-                isVisit[curPoint.x][curPoint.y - 1] = true;
-                bfsPoints.add(nextPoint);
-                queue.add(nextPoint);
-            }
+            if(point(curPoint.x, curPoint.y - 1))
+                add(curPoint.x, curPoint.y - 1, curPoint);
 
-            if ((mapArray[curPoint.x + 1][curPoint.y] == Const.isEmpty || mapArray[curPoint.x + 1][curPoint.y] == Const.isFood)
-                    && !isVisit[curPoint.x + 1][curPoint.y]) {
-                nextPoint = new PathPoint(curPoint.x + 1, curPoint.y, curPoint);
-                isVisit[curPoint.x + 1][curPoint.y] = true;
-                bfsPoints.add(nextPoint);
-                queue.add(nextPoint);
-            }
+            if(point(curPoint.x + 1, curPoint.y))
+                add(curPoint.x + 1, curPoint.y, curPoint);
 
-            if ((mapArray[curPoint.x][curPoint.y + 1] == Const.isEmpty || mapArray[curPoint.x][curPoint.y + 1] == Const.isFood)
-                    && !isVisit[curPoint.x][curPoint.y + 1]) {
-                nextPoint = new PathPoint(curPoint.x, curPoint.y + 1, curPoint);
-                isVisit[curPoint.x][curPoint.y + 1] = true;
-                bfsPoints.add(nextPoint);
-                queue.add(nextPoint);
-            }
+            if(point(curPoint.x, curPoint.y + 1))
+                add(curPoint.x, curPoint.y + 1, curPoint);
         }
 
-        for (PathPoint point : bfsPoints) {
+        for (PathPoint point : bfsPath) {
             if (foodPoint.equals(point)) {
                 if(!isNewPath)
                     return true;
                 path = new LinkedList<>();
-                snakePath(bfsPoints, point);
+                snakePath(bfsPath, point);
                 return true;
             }
         }
@@ -111,19 +95,30 @@ public class BFS {
         return false;
     }
 
-    public boolean makeNewPath() {
-       return newPath(snake.food, true);
+    private boolean point(int x, int y) {
+        return (map[x][y] == Const.isEmpty || map[x][y] == Const.isFood) && !isVisit[x][y];
     }
 
-    public boolean checkUseful(SnakePoint newFoodPoint) {
-        return newPath(newFoodPoint, false);
+    private void add(int x, int y, PathPoint curPoint){
+        PathPoint nextPoint = new PathPoint(x, y, curPoint);
+        isVisit[x][y] = true;
+        bfsPath.add(nextPoint);
+        queue.add(nextPoint);
     }
 
-    private void snakePath(List<PathPoint> bfsPoints, PathPoint curPoint) {
-        for (PathPoint point : bfsPoints) {
+    public boolean path() {
+       return search(snake.food, true);
+    }
+
+    public boolean reachable(SnakePoint newFoodPoint) {
+        return search(newFoodPoint, false);
+    }
+
+    private void snakePath(List<PathPoint> bfsPath, PathPoint curPoint) {
+        for (PathPoint point : bfsPath) {
             if (point.equals(curPoint)) {
-                bfsPoints.remove(curPoint);
-                snakePath(bfsPoints, curPoint.pre);
+                bfsPath.remove(curPoint);
+                snakePath(bfsPath, curPoint.pre);
                 path.add(curPoint);
                 break;
             }

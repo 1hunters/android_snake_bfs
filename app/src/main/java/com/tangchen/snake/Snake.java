@@ -69,7 +69,7 @@ public class Snake {
             snakeView.isEat = true;
             while (!checkUsable(produceFood())) ; //生成一个新的食物
 
-            bfs.makeNewPath();
+            bfs.path();
 
             if (INTERVAL >= 500)
                 INTERVAL *= 0.95;
@@ -128,7 +128,7 @@ public class Snake {
     public void start() {
         snakeView.initMap(mapArray);
         while (!checkUsable(produceFood())) ;
-        bfs.makeNewPath();
+        bfs.path();
         new Thread(new GameThread()).start();
     }
 
@@ -147,7 +147,8 @@ public class Snake {
                 return false;
         }
 
-        if(!bfs.checkUseful(newFoodPoint))
+//        生成食物前检测实物落点是否可达
+        if (!bfs.reachable(newFoodPoint))
             return false;
 
         this.food = newFoodPoint;
@@ -174,7 +175,7 @@ public class Snake {
             while (!Thread.currentThread().isInterrupted()) {
 //                当没撞墙时，每次循环调用一次运动方法，将整个蛇身向某个方向运动
                 while (true) {
-                    snakeView.moveDirection = bfs.getDirection();
+                    snakeView.moveDirection = bfs.nextDir();
                     motionSnake();
                     Message message = new Message();
                     message.obj = "refresh";
