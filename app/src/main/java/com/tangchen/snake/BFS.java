@@ -13,6 +13,10 @@ public class BFS {
     private Snake snake;
     private List<PathPoint> path;
     private SnakePoint headPoint, foodPoint;
+    private int[][] map;
+    private List<PathPoint> bfsPath;
+    private Queue<PathPoint> queue;
+    private boolean[][] isVisit;
 
     private BFS() {
 
@@ -49,11 +53,6 @@ public class BFS {
         }
     }
 
-    private int[][] map;
-    private List<PathPoint> bfsPath;
-    private Queue<PathPoint> queue;
-    private boolean[][] isVisit;
-
     private boolean search(SnakePoint pathPoint, boolean isNewPath) {
         headPoint = snake.getHeadPoint();
         foodPoint = pathPoint;
@@ -69,16 +68,16 @@ public class BFS {
         while (!queue.isEmpty()) {
             PathPoint curPoint = queue.poll();
 
-            if(point(curPoint.x - 1, curPoint.y))
+            if(checkPoint(curPoint.x - 1, curPoint.y))
                 add(curPoint.x - 1, curPoint.y, curPoint);
 
-            if(point(curPoint.x, curPoint.y - 1))
+            if(checkPoint(curPoint.x, curPoint.y - 1))
                 add(curPoint.x, curPoint.y - 1, curPoint);
 
-            if(point(curPoint.x + 1, curPoint.y))
+            if(checkPoint(curPoint.x + 1, curPoint.y))
                 add(curPoint.x + 1, curPoint.y, curPoint);
 
-            if(point(curPoint.x, curPoint.y + 1))
+            if(checkPoint(curPoint.x, curPoint.y + 1))
                 add(curPoint.x, curPoint.y + 1, curPoint);
         }
 
@@ -95,7 +94,7 @@ public class BFS {
         return false;
     }
 
-    private boolean point(int x, int y) {
+    private boolean checkPoint(int x, int y) {
         return (map[x][y] == Const.isEmpty || map[x][y] == Const.isFood) && !isVisit[x][y];
     }
 
@@ -135,12 +134,6 @@ public class BFS {
         public PathPoint(int x, int y, PathPoint pre) {
             super(x, y);
             this.pre = pre;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            PathPoint compare = (PathPoint) obj;
-            return this.x == compare.x && this.y == compare.y;
         }
     }
 }
