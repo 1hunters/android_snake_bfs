@@ -39,7 +39,6 @@ public class BFS {
         int offsetX = point.x - head.x;
         int offsetY = point.y - head.y;
 
-
         if (offsetX != 0) {
             if (offsetX > 0)
                 return Const.RIGHT;
