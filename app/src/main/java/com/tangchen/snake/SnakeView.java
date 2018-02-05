@@ -83,7 +83,8 @@ public class SnakeView extends View {
         SnakePoint food = controller.food;
         mapArray[food.x][food.y] = Const.isFood;
 
-        Rect r = new Rect(food.x * offsetX, food.y * offsetY, offsetX + offsetX * food.x, offsetY + offsetY * food.y);
+        Rect r = new Rect(food.x * offsetX, food.y * offsetY,
+                offsetX + offsetX * food.x, offsetY + offsetY * food.y);
         paint.setColor(Color.BLUE);
         canvas.drawRect(r, paint);
     }

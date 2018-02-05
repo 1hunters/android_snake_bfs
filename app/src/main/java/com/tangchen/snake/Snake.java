@@ -84,7 +84,7 @@ public class Snake {
         } else
             snakePoints.remove(tailPoint);
 
-        tailPoint = snakePoints.get(Const.TAILPOINT);
+        tailPoint = snakePoints.get(Const.TAIL_POINT);
     }
 
 //    撞击检测
@@ -128,7 +128,7 @@ public class Snake {
             snakePoints.add(new SnakePoint(i, 5));
 
 //        设置蛇尾为动态数组第一个数据
-        tailPoint = snakePoints.get(Const.TAILPOINT);
+        tailPoint = snakePoints.get(Const.TAIL_POINT);
 //        蛇头为数组最后一个数据
         headPoint = snakePoints.get(snakePoints.size() - 1);
         start();

@@ -32,10 +32,10 @@ public class BFS {
     }
 
     public int nextDir() {
-        PathPoint point = path.get(Const.FIRSTPOINT);
+        PathPoint point = path.get(Const.FIRST_POINT);
         SnakePoint head = snake.getHeadPoint();
 
-        path.remove(Const.FIRSTPOINT);
+        path.remove(Const.FIRST_POINT);
         int offsetX = point.x - head.x;
         int offsetY = point.y - head.y;
 
