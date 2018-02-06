@@ -59,6 +59,7 @@ public class SnakeView extends View {
         int offsetX = getWidth() / Const.mapSize;
         int offsetY = getWidth() / Const.mapSize;
         SnakePoint headPoint = controller.getHeadPoint();
+        SnakePoint tailPoint = controller.getTailPoint();
 
         List<SnakePoint> snakeBody = controller.snakePoints;
 
@@ -74,6 +75,8 @@ public class SnakeView extends View {
                     paint.setColor(Color.GREEN);
                 else if (headPoint.x == x && headPoint.y == y)
                     paint.setColor(Color.BLACK);
+                else if (tailPoint.x == x && tailPoint.y == y)
+                    paint.setColor(Color.MAGENTA);
                 else
                     paint.setColor(Color.RED);
 

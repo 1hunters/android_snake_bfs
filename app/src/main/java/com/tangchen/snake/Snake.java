@@ -145,9 +145,9 @@ public class Snake {
         return headPoint;
     }
 
-//    public SnakePoint getTailPoint() {
-//        return tailPoint;
-//    }
+    public SnakePoint getTailPoint() {
+        return tailPoint;
+    }
 
     public boolean checkUsable(SnakePoint newFoodPoint) {
 //        遍历整个蛇身数组，检查生成的食物是否在蛇身或墙内
