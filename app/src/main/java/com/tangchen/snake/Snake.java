@@ -182,16 +182,17 @@ public class Snake {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                    snakeView.moveDirection = bfs.nextDir();
-                    motionSnake();
-                    Message message = new Message();
-                    message.obj = "refresh";
-                    myHandler.sendMessage(message);
-                    try {
-                        Thread.sleep(150);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
+                bfs.path(); //每走一次都进行一次BFS来判断下一步方向。去掉该行也可执行，但有时会绕过empty区。
+                snakeView.moveDirection = bfs.nextDir();
+                motionSnake();
+                Message message = new Message();
+                message.obj = "refresh";
+                myHandler.sendMessage(message);
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
                 //snakeView.resetSnake();
             }
         }

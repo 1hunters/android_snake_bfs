@@ -19,7 +19,8 @@ public class BFS {
     private boolean[][] isVisit;
 
     private BFS() {
-
+        bfsPath = new ArrayList<>();
+        queue = new LinkedList<>();
     }
 
     private static BFS instance;
@@ -57,8 +58,8 @@ public class BFS {
         foodPoint = pathPoint;
 
         map = snake.mapArray;
-        bfsPath = new ArrayList<>();
-        queue = new LinkedList<>();
+        bfsPath.clear();
+        queue.clear();
         isVisit = new boolean[Const.mapSize][Const.mapSize];
         PathPoint head = new PathPoint(headPoint.x, headPoint.y, null);
         isVisit[headPoint.x][headPoint.y] = true;
